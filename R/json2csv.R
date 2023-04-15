@@ -4,22 +4,16 @@
 #' predefined columns which further acts as the input for other functions provided in this vDiveR package.
 #'
 #' @param json_data DiMA JSON output dataframe
-#' @param hostName name of the host species
-#' @param proteinName name of the protein
+#' @param host_name name of the host species
+#' @param protein_name name of the protein
 #' @return A dataframe which acts as input for the other functions in vDiveR package
-#' @examples inputdf<-json2csv(JSONsample)
+#' @examples inputdf<-json2csv(JSON_sample)
 #' @importFrom stats aggregate
 #' @importFrom dplyr mutate_if right_join distinct
 #' @importFrom tidyr replace_na
 #' @export
-json2csv <-function(json_data, hostName="unknown host", proteinName="unknown protein"){
+json2csv <-function(json_data, host_name="unknown host", protein_name="unknown protein"){
     Group.2 <- x <- results.position <- results.diversity_motifs <- motif_short <- NULL
-    #read JSON file
-    #write("\r\n", file = infile, append = TRUE, sep = "\n")
-    #con <- file(infile)
-    #jsonfile <- readLines(con)
-    #close(con)
-    #json_data <- jsonlite::fromJSON(paste(jsonfile, collapse = "\n"))
 
     data_flatten <- as.data.frame(json_data) %>%
         tidyr::unnest(cols = c(results.diversity_motifs))
@@ -42,7 +36,7 @@ json2csv <-function(json_data, hostName="unknown host", proteinName="unknown pro
     #merge multiIndex to motifs_incidence df
     motifs_incidence <-right_join(motifs_incidence,multiIndex, by='results.position')%>%
         distinct()
-    #HERE I STOP
+
     #replace multiIndex with boolean: x > 1 = TRUE and vice versa
     motifs_incidence$multiIndex <- ifelse(motifs_incidence$multiIndex>1, TRUE,FALSE)
 
@@ -60,7 +54,7 @@ json2csv <-function(json_data, hostName="unknown host", proteinName="unknown pro
         distinct()
 
     #assign host
-    motifs['host'] <- hostName
+    motifs['host'] <- host_name
 
     #rename columns
     colnames(motifs)<-c('position','index.incidence','major.incidence','minor.incidence','unique.incidence','multiIndex','proteinName','count','lowSupport','entropy','distinctVariant.incidence','totalVariants.incidence','indexSequence','highestEntropy.position','highestEntropy','averageEntropy','host')

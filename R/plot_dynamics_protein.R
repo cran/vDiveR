@@ -5,7 +5,7 @@
 #'
 #' @param df DiMA JSON converted csv file data
 #' @param host number of host (1/2)
-#' @param proteinOrder order of proteins displayed in plot
+#' @param protein_order order of proteins displayed in plot
 #' @param base_size base font size in plot
 #' @param alpha any number from 0 (transparent) to 1 (opaque)
 #' @param dot_size dot size in scatter plot
@@ -13,14 +13,14 @@
 #' @examples plot_dynamics_protein(proteins_1host)
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot_dynamics_protein<-function(df, host=1, proteinOrder="", base_size=8, alpha = 1/3, dot_size = 3){
+plot_dynamics_protein<-function(df, host=1, protein_order="", base_size=8, alpha = 1/3, dot_size = 3){
     #single host
     if (host == 1){
-        plot4_5(df,proteinOrder, alpha, dot_size, base_size)
+        plot4_5(df,protein_order, alpha, dot_size, base_size)
     }else{ #multihost
         #split the data into multiple subsets (if multiple hosts detected)
         plot4_list<-split(df,df$host)
-        plot4_multihost<-lapply(plot4_list,plot4_5,proteinOrder, alpha, dot_size, base_size)
+        plot4_multihost<-lapply(plot4_list,plot4_5,protein_order, alpha, dot_size, base_size)
 
         #create spacing between multihost plots
         theme = theme(plot.margin = unit(c(0.5,1.0,0.1,0.5), "cm"))
@@ -32,7 +32,7 @@ plot_dynamics_protein<-function(df, host=1, proteinOrder="", base_size=8, alpha 
 #' @importFrom ggplot2 geom_violin geom_boxplot ylim scale_color_grey margin element_line
 #' @importFrom ggplot2 scale_fill_manual theme_bw facet_grid xlab ylab
 #' @importFrom ggpubr annotate_figure ggarrange text_grob
-plot4_5<-function(data, proteinOrder="",alpha=1/3, dot_size=3, base_size=8){
+plot4_5<-function(data, protein_order="",alpha=1/3, dot_size=3, base_size=8){
     Total_Variants <- Incidence <- Group <- x <- proteinName <- entropy <- NULL
 
     plot4_data<-data.frame()
@@ -45,9 +45,9 @@ plot4_5<-function(data, proteinOrder="",alpha=1/3, dot_size=3, base_size=8){
         plot4_data<-rbind(plot4_data,tmp)
     }
 
-    if (proteinOrder !=""){
+    if (protein_order !=""){
         #order the proteins based on user input
-        level<-strsplit(proteinOrder, ',')[[1]]
+        level<-strsplit(protein_order, ',')[[1]]
         #set protein order as factor
         plot4_data$proteinName<-factor(plot4_data$proteinName, levels=level)
         plot4_data$size_f = factor(plot4_data$proteinName,levels = level)

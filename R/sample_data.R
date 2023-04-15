@@ -58,5 +58,17 @@
 #'
 #'
 #' @format A Diversity Motif Analyzer (DiMA) tool JSON file
-"JSONsample"
+"JSON_sample"
 
+#' Metadata Input Sample
+#'
+#' A dummy dataset that acts as an input for plot_worldmap() and plot_time()
+#'
+#'
+#' @format A data frame with 1000 rows and 3 variables:
+#' \describe{
+#'   \item{ID}{unique identifier of the sequence}
+#'   \item{country}{country of the sequence collection}
+#'   \item{date}{collection date of the sequence}
+#' }
+"metadata"

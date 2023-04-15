@@ -15,6 +15,8 @@ Authors:
 \itemize{
   \item Li Chuin Chong
   \item Evgenia Chikina
+  \item Yin Cheng Chen
+  \item Mohammad Asif Khan
 }
 
 }

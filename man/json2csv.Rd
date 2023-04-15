@@ -4,14 +4,18 @@
 \alias{json2csv}
 \title{JSON2CSV}
 \usage{
-json2csv(json_data, hostName = "unknown host", proteinName = "unknown protein")
+json2csv(
+  json_data,
+  host_name = "unknown host",
+  protein_name = "unknown protein"
+)
 }
 \arguments{
 \item{json_data}{DiMA JSON output dataframe}
 
-\item{hostName}{name of the host species}
+\item{host_name}{name of the host species}
 
-\item{proteinName}{name of the protein}
+\item{protein_name}{name of the protein}
 }
 \value{
 A dataframe which acts as input for the other functions in vDiveR package
@@ -21,5 +25,5 @@ This function converts DiMA (v4.1.1) JSON output file to a dataframe with 17
 predefined columns which further acts as the input for other functions provided in this vDiveR package.
 }
 \examples{
-inputdf<-json2csv(JSONsample)
+inputdf<-json2csv(JSON_sample)
 }

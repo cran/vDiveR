@@ -6,23 +6,23 @@
 #' in either CSv or FASTA format
 #'
 #' @param data DiMA JSON converted csv file data
-#' @param conservationLevel CCS (completely conserved) / HCS (highly conserved)
+#' @param conservation_level CCS (completely conserved) / HCS (highly conserved)
 #' @param kmer size of the k-mer window
 #' @param output_type type of the output; "csv" or "fasta"
 #' @return A dataframe
 #' @examples csv<-concat_conserved_kmer(proteins_1host)
-#' @examples csv_2hosts<-concat_conserved_kmer(protein_2hosts, conservationLevel = "CCS")
-#' @examples fasta <- concat_conserved_kmer(protein_2hosts, output_type = "fasta", conservationLevel = "HCS")
+#' @examples csv_2hosts<-concat_conserved_kmer(protein_2hosts, conservation_level = "CCS")
+#' @examples fasta <- concat_conserved_kmer(protein_2hosts, output_type = "fasta", conservation_level = "HCS")
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter select summarise group_by slice bind_rows mutate n
 #' @importFrom stringr str_sub
 #' @importFrom tidyr spread separate
 #' @importFrom rlang :=
 #' @export
-concat_conserved_kmer<-function(data, conservationLevel = "HCS",kmer=9,output_type="csv"){
+concat_conserved_kmer<-function(data, conservation_level = "HCS",kmer=9,output_type="csv"){
     index.incidence <- proteinName <- indexSequence <- n <- start <- end <- NULL
     # threshold HCS / CCS
-    threshold <- ifelse(conservationLevel == "CCS", 100, 90)
+    threshold <- ifelse(conservation_level == "CCS", 100, 90)
 
 
     # filter whole dataset by index.incidence (HCS/CCS)
@@ -110,7 +110,7 @@ concat_conserved_kmer<-function(data, conservationLevel = "HCS",kmer=9,output_ty
                 end = end_ind
             ) %>%
                 mutate(
-                    !!conservationLevel := sprintf("%s_%s_%i", conservationLevel, prot_name, n),
+                    !!conservation_level := sprintf("%s_%s_%i", conservation_level, prot_name, n),
                     Position = sprintf("%i-%i", start, end),
                     Sequence = str_sub(proteins_seq[[prot_name]], start, end)
                 ) %>%
@@ -125,7 +125,7 @@ concat_conserved_kmer<-function(data, conservationLevel = "HCS",kmer=9,output_ty
     fasta_df <- do.call(rbind, lapply(seq(nrow(csv_df)), function(i) {
         csv_df[i, ] %>%
             select(-Position) %>%
-            mutate(!!conservationLevel := paste0(">", get(conservationLevel))) %>%
+            mutate(!!conservation_level := paste0(">", get(conservation_level))) %>%
             t()
     }))
 

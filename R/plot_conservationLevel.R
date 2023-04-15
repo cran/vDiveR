@@ -7,20 +7,20 @@
 #' extremely diverse (pink) (index incidence <= 10\%).
 #'
 #' @param df DiMA JSON converted csv file data
-#' @param proteinOrder order of proteins displayed in plot
-#' @param conservationLabel 0 (partial; show present conservation labels only) or 1 (full; show ALL conservation labels) in plot
+#' @param protein_order order of proteins displayed in plot
+#' @param conservation_label 0 (partial; show present conservation labels only) or 1 (full; show ALL conservation labels) in plot
 #' @param host number of host (1/2)
 #' @param base_size base font size in plot
 #' @param label_size conservation labels font size
 #' @param alpha any number from 0 (transparent) to 1 (opaque)
-#' @examples plot_conservationLevel(proteins_1host, conservationLabel = 1,alpha=0.8, base_size = 15)
-#' @examples plot_conservationLevel(protein_2hosts, conservationLabel = 0, host=2)
+#' @examples plot_conservationLevel(proteins_1host, conservation_label = 1,alpha=0.8, base_size = 15)
+#' @examples plot_conservationLevel(protein_2hosts, conservation_label = 0, host=2)
 #' @return A plot
 #' @importFrom dplyr case_when
 #' @importFrom grid unit
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot_conservationLevel <- function(df, proteinOrder="",conservationLabel=1,host=1, base_size = 11, label_size = 2.6, alpha=0.6){
+plot_conservationLevel <- function(df, protein_order="",conservation_label=1,host=1, base_size = 11, label_size = 2.6, alpha=0.6){
     df<-df%>%mutate(ConservationLevel = case_when(
         df$index.incidence == 100 ~ "Completely conserved (CC)",
         df$index.incidence >= 90 ~ "Highly conserved (HC)",
@@ -31,12 +31,12 @@ plot_conservationLevel <- function(df, proteinOrder="",conservationLabel=1,host=
 
     #single host
     if (host == 1){
-        plot_plot7(data = df,proteinOrder = proteinOrder,conservationLabel = conservationLabel, base_size = base_size, label_size = label_size)
+        plot_plot7(data = df,protein_order = protein_order,conservation_label = conservation_label, base_size = base_size, label_size = label_size)
     }else{ #multihost
 
         #split the data into multiple subsets (if multiple hosts detected)
         plot7_list<-split(df,df$host)
-        plot7_multihost<-lapply(plot7_list,plot_plot7, proteinOrder,conservationLabel, base_size, label_size)
+        plot7_multihost<-lapply(plot7_list,plot_plot7, protein_order,conservation_label, base_size, label_size)
 
         #create spacing between multihost plots
         theme = theme(plot.margin = unit(c(2.5,1.0,0.1,0.5), "cm"))
@@ -50,8 +50,8 @@ plot_conservationLevel <- function(df, proteinOrder="",conservationLabel=1,host=
 #' @importFrom gghalves geom_half_boxplot geom_half_point
 #' @importFrom ggtext geom_richtext
 #plotting function
-plot_plot7<- function(data,proteinOrder="",conservationLabel=1, base_size = 11, label_size = 2.6, alpha =0.6){
-    proteinName <- ConservationLabel <- Total <- index.incidence <- NULL
+plot_plot7<- function(data,protein_order="",conservation_label=1, base_size = 11, label_size = 2.6, alpha =0.6){
+    proteinName <- Total <- index.incidence <- NULL
     Label <- ConservationLevel <- NULL
     #add word 'protein' in front of each protein name
     data$proteinName<-paste("Protein",data$proteinName)
@@ -60,10 +60,10 @@ plot_plot7<- function(data,proteinOrder="",conservationLabel=1, base_size = 11, 
     data1$proteinName <- "All"
     data1$level <- "All"
     #set up the order of proteins in plot from left to right
-    if (proteinOrder ==""){ #follow the default order in csv file
+    if (protein_order ==""){ #follow the default order in csv file
         level<-c("All",unique(data$proteinName))
     }else{ #order the proteins based on user input
-        level<-c("All",strsplit(proteinOrder, ',')[[1]])
+        level<-c("All",strsplit(protein_order, ',')[[1]])
     }
 
     #determine the protein order
@@ -79,7 +79,7 @@ plot_plot7<- function(data,proteinOrder="",conservationLabel=1, base_size = 11, 
 
     C_level<- c("Completely conserved (CC)","Highly conserved (HC)","Mixed variable (MV)","Highly diverse (HD)","Extremely diverse (ED)")
     #check the presence of conservation level: insert value 0 if it is absent
-    if (conservationLabel == 1){ #full label
+    if (conservation_label == 1){ #full label
         #check the presence of conservation level: insert value 0 if it is absent
         for ( conservation in C_level){ #conservation level
             for (name in level){ #proteinName

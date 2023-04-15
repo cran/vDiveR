@@ -6,7 +6,7 @@
 \usage{
 concat_conserved_kmer(
   data,
-  conservationLevel = "HCS",
+  conservation_level = "HCS",
   kmer = 9,
   output_type = "csv"
 )
@@ -14,7 +14,7 @@ concat_conserved_kmer(
 \arguments{
 \item{data}{DiMA JSON converted csv file data}
 
-\item{conservationLevel}{CCS (completely conserved) / HCS (highly conserved)}
+\item{conservation_level}{CCS (completely conserved) / HCS (highly conserved)}
 
 \item{kmer}{size of the k-mer window}
 
@@ -31,6 +31,6 @@ in either CSv or FASTA format
 }
 \examples{
 csv<-concat_conserved_kmer(proteins_1host)
-csv_2hosts<-concat_conserved_kmer(protein_2hosts, conservationLevel = "CCS")
-fasta <- concat_conserved_kmer(protein_2hosts, output_type = "fasta", conservationLevel = "HCS")
+csv_2hosts<-concat_conserved_kmer(protein_2hosts, conservation_level = "CCS")
+fasta <- concat_conserved_kmer(protein_2hosts, output_type = "fasta", conservation_level = "HCS")
 }

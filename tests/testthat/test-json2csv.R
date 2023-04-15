@@ -1,6 +1,6 @@
 
-test_that("Test Case 1: json2csv works on sample data (JSONsample), check df shape and column names",{
-    csv_df <- json2csv(JSONsample)
+test_that("Test Case 1: json2csv works on sample data (JSON_sample), check df shape and column names",{
+    csv_df <- json2csv(JSON_sample)
     expect_equal(unique(csv_df$proteinName), "A")
     expect_equal(nrow(csv_df),183)
     expect_equal(ncol(csv_df),17)
@@ -27,8 +27,8 @@ test_that("Test Case 1: json2csv works on sample data (JSONsample), check df sha
 
 })
 
-test_that("Test Case 2: json2csv works on sample data (JSONsample), check data integrity",{
-    csv_df <- json2csv(JSONsample)
+test_that("Test Case 2: json2csv works on sample data (JSON_sample), check data integrity",{
+    csv_df <- json2csv(JSON_sample)
 
     expect_equal(unique(csv_df$highestEntropy.position),66)
     expect_equal(unique(csv_df$highestEntropy),5.1592951)

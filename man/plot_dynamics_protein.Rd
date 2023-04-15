@@ -7,7 +7,7 @@
 plot_dynamics_protein(
   df,
   host = 1,
-  proteinOrder = "",
+  protein_order = "",
   base_size = 8,
   alpha = 1/3,
   dot_size = 3
@@ -18,7 +18,7 @@ plot_dynamics_protein(
 
 \item{host}{number of host (1/2)}
 
-\item{proteinOrder}{order of proteins displayed in plot}
+\item{protein_order}{order of proteins displayed in plot}
 
 \item{base_size}{base font size in plot}
 

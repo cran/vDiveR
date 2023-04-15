@@ -6,8 +6,8 @@
 \usage{
 plot_conservationLevel(
   df,
-  proteinOrder = "",
-  conservationLabel = 1,
+  protein_order = "",
+  conservation_label = 1,
   host = 1,
   base_size = 11,
   label_size = 2.6,
@@ -17,9 +17,9 @@ plot_conservationLevel(
 \arguments{
 \item{df}{DiMA JSON converted csv file data}
 
-\item{proteinOrder}{order of proteins displayed in plot}
+\item{protein_order}{order of proteins displayed in plot}
 
-\item{conservationLabel}{0 (partial; show present conservation labels only) or 1 (full; show ALL conservation labels) in plot}
+\item{conservation_label}{0 (partial; show present conservation labels only) or 1 (full; show ALL conservation labels) in plot}
 
 \item{host}{number of host (1/2)}
 
@@ -40,6 +40,6 @@ highly diverse (purple) (10\% < index incidence <= 20\%) and
 extremely diverse (pink) (index incidence <= 10\%).
 }
 \examples{
-plot_conservationLevel(proteins_1host, conservationLabel = 1,alpha=0.8, base_size = 15)
-plot_conservationLevel(protein_2hosts, conservationLabel = 0, host=2)
+plot_conservationLevel(proteins_1host, conservation_label = 1,alpha=0.8, base_size = 15)
+plot_conservationLevel(protein_2hosts, conservation_label = 0, host=2)
 }

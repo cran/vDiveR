@@ -7,11 +7,13 @@
 plot_entropy(
   df,
   host = 1,
-  proteinOrder = "",
+  protein_order = "",
   kmer_size = 9,
   ymax = 10,
   line_dot_size = 2,
-  wordsize = 8
+  word_size = 8,
+  all = TRUE,
+  highlight_zero_entropy = TRUE
 )
 }
 \arguments{
@@ -19,7 +21,7 @@ plot_entropy(
 
 \item{host}{number of host (1/2)}
 
-\item{proteinOrder}{order of proteins displayed in plot}
+\item{protein_order}{order of proteins displayed in plot}
 
 \item{kmer_size}{size of the k-mer window}
 
@@ -27,14 +29,19 @@ plot_entropy(
 
 \item{line_dot_size}{size of the line and dot in plot}
 
-\item{wordsize}{size of the wordings in plot}
+\item{word_size}{size of the wordings in plot}
+
+\item{all}{plot both the entropy and total variants (pass FALSE in to plot only the entropy)}
+
+\item{highlight_zero_entropy}{highlight region with zero entropy (default: TRUE)}
 }
 \value{
 A plot
 }
 \description{
-This function plot entropy (black) of each
-k-mer position across the studied proteins and highlight region with zero entropy in yellow.
+This function plot entropy (black) and total variant (red) incidence of each
+k-mer position across the studied proteins and highlight region(s) with zero entropy in yellow.
+k-mer position with low support is marked with a red triangle underneath the x-axis line.
 }
 \examples{
 plot_entropy(proteins_1host)

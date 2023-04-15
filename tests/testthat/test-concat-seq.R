@@ -30,7 +30,7 @@ test_that("Test Case 1: 9-mer HCS (single host), with CSV output",{
 })
 
 test_that("Test Case 2: 9-mer CCS (single host), with CSV output",{
-    CCS_1host<- concat_conserved_kmer(proteins_1host, conservationLevel = 'CCS')
+    CCS_1host<- concat_conserved_kmer(proteins_1host, conservation_level = 'CCS')
 
     expect_equal(nrow(CCS_1host),1)
     expect_equal(ncol(CCS_1host),3)
@@ -66,7 +66,7 @@ test_that("Test Case 3: 9-mer HCS (single host), with FASTA output",{
 })
 
 test_that("Test Case 4: 9-mer CCS (single host), with FASTA output",{
-    CCS_1host<- concat_conserved_kmer(proteins_1host, conservationLevel = 'CCS', output_type = "fasta")
+    CCS_1host<- concat_conserved_kmer(proteins_1host, conservation_level = 'CCS', output_type = "fasta")
 
     expect_equal(nrow(CCS_1host),2)
     expect_equal(ncol(CCS_1host),1)
