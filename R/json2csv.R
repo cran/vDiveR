@@ -56,6 +56,16 @@ json2csv <-function(json_data, host_name="unknown host", protein_name="unknown p
     #assign host
     motifs['host'] <- host_name
 
+    #check if all expected columns are present
+    #assert column with value of 0 if absent
+    expected_columns<-c('results.position','I','Ma','Mi','U','multiIndex','query_name','results.support','results.low_support','results.entropy','results.distinct_variants_incidence','results.total_variants_incidence','sequence','highest_entropy.position','highest_entropy.entropy','average_entropy','host')
+    missing_columns <- dplyr::setdiff(expected_columns, colnames(motifs))
+    template <- data.frame(matrix(0, nrow = nrow(motifs), ncol = length(missing_columns))) # Create a template dataframe with missing columns filled with 0
+    colnames(template) <- missing_columns
+
+    motifs <- cbind(motifs, template) # Combine the template dataframe and the original motifs dataframe
+    motifs <- motifs[, expected_columns] # Reorder columns to match the expected order
+
     #rename columns
     colnames(motifs)<-c('position','index.incidence','major.incidence','minor.incidence','unique.incidence','multiIndex','proteinName','count','lowSupport','entropy','distinctVariant.incidence','totalVariants.incidence','indexSequence','highestEntropy.position','highestEntropy','averageEntropy','host')
     #reorder the columns

@@ -4,20 +4,24 @@
 \alias{plot_worldmap}
 \title{Geographical Distribution of Sequences Plot}
 \usage{
-plot_worldmap(meta)
+plot_worldmap(meta, base_size = 8)
 }
 \arguments{
 \item{meta}{a dataframe with 3 columns, 'ID', 'country', and 'date'}
+
+\item{base_size}{word size in plot}
 }
 \value{
-A plot
+A list with 2 elements (a plot followed by a dataframe)
 }
 \description{
 This function plots a worldmap and color the affected geographical region(s)
 from light (lower) to dark (higher), depends on the cumulative number of sequences. 
+Aside from the plot, this function also returns a dataframe with 2 columns: 'Country' and 'Number of Sequences'.
 The input dataframe of this function is obtainable from metadata_extraction(), with NCBI 
 Protein / GISAID EpiCoV FASTA file as input.
 }
 \examples{
-plot_worldmap(metadata)
+geographical_plot <- plot_worldmap(metadata)$plot
+geographical_df <- plot_worldmap(metadata)$df
 }

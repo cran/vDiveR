@@ -4,19 +4,31 @@
 \alias{plot_time}
 \title{Time Distribution of Sequences Plot}
 \usage{
-plot_time(meta)
+plot_time(
+  metadata,
+  date_format = "\%Y-\%m-\%d",
+  base_size = 8,
+  date_break = "2 month"
+)
 }
 \arguments{
-\item{meta}{a dataframe with 3 columns, 'ID', 'country', and 'date'}
+\item{metadata}{a dataframe with 3 columns, 'ID', 'country', and 'date'}
+
+\item{date_format}{date format of the input dataframe}
+
+\item{base_size}{word size in plot}
+
+\item{date_break}{date break for the scale_x_date}
 }
 \value{
-A plot
+A list with 2 elements (a plot followed by a dataframe)
 }
 \description{
 This function plots the time distribution of provided sequences in the form of bar plot with 'Month' as x-axis and 
-'sequence recorded' as y-axis. The input dataframe of this function is obtainable from metadata_extraction(), with NCBI 
-Protein / GISAID EpiCoV FASTA file as input.
+'Number of Sequences' as y-axis. Aside from the plot, this function also returns a dataframe with 2 columns: 'Date' and 'Number of sequences'.
+The input dataframe of this function is obtainable from metadata_extraction(), with NCBI Protein / GISAID EpiCoV FASTA file as input.
 }
 \examples{
-plot_time(metadata)
+time_plot <- plot_time(metadata)$plot
+time_df <- plot_time(metadata)$df
 }

@@ -8,19 +8,28 @@
 #' @param protein_order order of proteins displayed in plot
 #' @param base_size base font size in plot
 #' @param alpha any number from 0 (transparent) to 1 (opaque)
-#' @param dot_size dot size in scatter plot
+#' @param line_dot_size dot size in scatter plot
+#' @param bw smoothing bandwidth of violin plot (default: nrd0)
+#' @param adjust adjust the width of violin plot (default: 1)
 #' @return A plot
 #' @examples plot_dynamics_protein(proteins_1host)
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot_dynamics_protein<-function(df, host=1, protein_order="", base_size=8, alpha = 1/3, dot_size = 3){
+plot_dynamics_protein<-function(df, 
+                                host=1, 
+                                protein_order="", 
+                                base_size=8, 
+                                alpha = 1/3, 
+                                line_dot_size = 3,
+                                bw = "nrd0",
+                                adjust = 1){
     #single host
     if (host == 1){
-        plot4_5(df,protein_order, alpha, dot_size, base_size)
+        plot4_5(data=df, protein_order=protein_order, base_size=base_size,alpha=alpha,  line_dot_size=line_dot_size, bw = bw, adjust = adjust)
     }else{ #multihost
         #split the data into multiple subsets (if multiple hosts detected)
         plot4_list<-split(df,df$host)
-        plot4_multihost<-lapply(plot4_list,plot4_5,protein_order, alpha, dot_size, base_size)
+        plot4_multihost<-lapply(plot4_list,plot4_5,protein_order, alpha, line_dot_size, base_size, host, bw, adjust)
 
         #create spacing between multihost plots
         theme = theme(plot.margin = unit(c(0.5,1.0,0.1,0.5), "cm"))
@@ -32,14 +41,21 @@ plot_dynamics_protein<-function(df, host=1, protein_order="", base_size=8, alpha
 #' @importFrom ggplot2 geom_violin geom_boxplot ylim scale_color_grey margin element_line
 #' @importFrom ggplot2 scale_fill_manual theme_bw facet_grid xlab ylab
 #' @importFrom ggpubr annotate_figure ggarrange text_grob
-plot4_5<-function(data, protein_order="",alpha=1/3, dot_size=3, base_size=8){
+plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8, host=1, bw = "nrd0", adjust = 1){
     Total_Variants <- Incidence <- Group <- x <- proteinName <- entropy <- NULL
 
     plot4_data<-data.frame()
-    group_names<-c("Index","Major","Minor","Unique","Total variants","Distinct variants")
+    group_names<-c("Index",
+                   "Major","Minor",
+                   "Unique",
+                   "Total variants","Distinct variants")
 
     for (i in 7:12){
         tmp<-data.frame(proteinName=data[1],position=data[2],incidence=data[i],total_variants=data[11],Group=group_names[i-6],Multiindex=data[13])
+        #multiple host
+        if (host != 1) {
+          tmp$host = data[14]
+        }
         names(tmp)[3]<-"Incidence"
         names(tmp)[4]<-"Total_Variants"
         plot4_data<-rbind(plot4_data,tmp)
@@ -56,7 +72,7 @@ plot4_5<-function(data, protein_order="",alpha=1/3, dot_size=3, base_size=8){
     plot5_data<-plot4_data
 
     #plot plot 4
-    plot4<-ggplot()+geom_point(plot4_data,mapping=aes(x=Total_Variants,y=Incidence,color=Group),alpha=alpha,size=dot_size)+
+    plot4<-ggplot()+geom_point(plot4_data,mapping=aes(x=Total_Variants,y=Incidence,color=Group),alpha=alpha,size=line_dot_size)+
         scale_x_continuous(limits = c(0, 100), breaks = seq(0, 100, 20))+
         scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20))+
         labs(y = "Incidence (%)",x= NULL)+
@@ -74,69 +90,116 @@ plot4_5<-function(data, protein_order="",alpha=1/3, dot_size=3, base_size=8){
         plot4<-plot4+ggtitle(unique(data$host))+
             theme(plot.title = element_text(hjust = 0.5))
     }
-
-    #prepare the data for each subplot of plot5
-    index<-plot5_data[plot5_data$Group %in% c("Index"),]
-    major<-plot5_data[plot5_data$Group %in% c("Major"),]
-    minor<-plot5_data[plot5_data$Group %in% c("Minor"),]
-    unique<-plot5_data[plot5_data$Group %in% c("Unique"),]
-    nonatypes<-plot5_data[plot5_data$Group %in% c("Distinct variants"),]
-    variants_max_yaxis<-ceiling((max(as.numeric(major$Incidence),as.numeric(minor$Incidence),as.numeric(unique$Incidence))/10))*10
-
-    #plot 5
-    plot5_index<-ggplot(index, aes(x=proteinName, y=Incidence))+
-        geom_violin(fill="black",trim = FALSE, color="black",alpha=0.9)+ylim(0,100)+ylab("Index k-mer (%)")+xlab("") +theme_bw() +
-        geom_boxplot(outlier.shape = NA,width=0.05, color="white",alpha=0.15,fill="white")+
-        theme_classic(base_size = base_size)+
-        theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-              panel.border = element_rect(colour = "black", fill=NA, size=1),
-              axis.ticks.x = element_blank())
-
-    plot5_tv<-ggplot(index, aes(x=proteinName, y=Total_Variants))+
-        geom_violin(fill="#f7238a",trim = FALSE, color="#f7238a",alpha=0.9)+ylim(0,100)+ylab("Total variant (%)")+xlab("") +theme_bw() +
-        geom_boxplot(outlier.shape = NA,width=0.05, color="black",alpha=0.15,fill="white")+
-        theme_classic(base_size = base_size)+
-        theme(plot.margin = unit(c(0,0.1,0.1,0.1), "cm"),
-              panel.border = element_rect(colour = "black", fill=NA, size=1),
-              axis.ticks.x = element_blank())
-
-    plot5_major<-ggplot(major, aes(x=proteinName, y=Incidence)) +
-        geom_violin(fill="#37AFAF",trim = FALSE, color="#37AFAF")+ylim(0,variants_max_yaxis)+ylab("Major variant (%)")+xlab("")+theme_bw() +
-        geom_boxplot(outlier.shape = NA,width=0.04, color="black", alpha=0.15,fill="white")+
-        theme_classic(base_size = base_size)+
-        theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-              panel.border = element_rect(colour = "black", fill=NA, size=1),
-              axis.ticks.x = element_blank(),
-              axis.text.y  = element_text(face="bold"))
-
-    plot5_minor<-ggplot(minor, aes(x=proteinName, y=Incidence))+
-        geom_violin(fill="#42aaff",trim = FALSE,color="#42aaff")+ylim(0,variants_max_yaxis)+ylab("Minor variants (%)")+xlab("") +theme_bw() +
-        geom_boxplot(outlier.shape = NA,width=0.04, color="black", alpha=0.15,fill="white")+
-        theme_classic(base_size = base_size)+
-        theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-              panel.border = element_rect(colour = "black", fill=NA, size=1),
-              axis.ticks.x = element_blank(),
-              axis.text.y  = element_text(face="bold"))
-
-    plot5_unique<-ggplot(unique, aes(x=proteinName, y=Incidence)) +
-        geom_violin(fill="#af10f1",trim = FALSE, color="#af10f1")+ylim(0,variants_max_yaxis)+ylab("Unique variants (%)")+xlab("")+theme_bw() +
-        geom_boxplot(outlier.shape = NA,width=0.05, color="black", alpha=0.15,fill="white")+
-        theme_classic(base_size = base_size)+
-        theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-              panel.border = element_rect(colour = "black", fill=NA, size=1),
-              axis.ticks.x = element_blank(),
-              axis.text.y  = element_text(face="bold"))
-
-    plot5_nonatypes<-ggplot(nonatypes, aes(x=proteinName, y=Incidence)) +
-        geom_violin(fill="#c2c7cb",trim = FALSE, color="#c2c7cb")+ylim(0,100)+ylab("Distinct variants (%)")+xlab("")+theme_bw()+
-        geom_boxplot(outlier.shape = NA,width=0.05, color="black", alpha=0.15,fill="white") +
-        theme_classic(base_size = base_size)+
-        theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-              panel.border = element_rect(colour = "black", fill=NA, size=1),
-              axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"),
-              axis.ticks.x = element_blank())
-    plot5<-ggarrange(plot5_index,plot5_tv,plot5_nonatypes,plot5_major,plot5_minor,plot5_unique,ncol=3,nrow=2)
-
+    
+    if (length(unique(data$proteinName)) <=10){
+      #prepare the data for each subplot of plot5
+      index<-plot5_data[plot5_data$Group %in% c("Index"),]
+      major<-plot5_data[plot5_data$Group %in% c("Major"),]
+      minor<-plot5_data[plot5_data$Group %in% c("Minor"),]
+      unique<-plot5_data[plot5_data$Group %in% c("Unique"),]
+      nonatypes<-plot5_data[plot5_data$Group %in% c("Distinct variants"),]
+      variants_max_yaxis<-ceiling((max(as.numeric(major$Incidence),as.numeric(minor$Incidence),as.numeric(unique$Incidence))/10))*10
+  
+      #plot 5
+      plot5_index<-ggplot(index, aes(x=proteinName, y=Incidence))+
+          geom_violin(fill="black",trim = TRUE, color="black",alpha=0.9, adjust=adjust, bw=bw)+ylim(0,100)+ylab("Index k-mer (%)")+xlab("") +theme_bw() +
+          geom_boxplot(outlier.shape = NA,width=0.05, color="white",alpha=0.15,fill="white")+
+          theme_classic(base_size = base_size)+
+          theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
+                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                axis.ticks.x = element_blank())
+  
+      plot5_tv<-ggplot(index, aes(x=proteinName, y=Total_Variants))+
+          geom_violin(fill="#f7238a",trim = TRUE, color="#f7238a",alpha=0.9, adjust=adjust, bw=bw)+ylim(0,100)+ylab("Total variant (%)")+xlab("") +theme_bw() +
+          geom_boxplot(outlier.shape = NA,width=0.05, color="black",alpha=0.15,fill="white")+
+          theme_classic(base_size = base_size)+
+          theme(plot.margin = unit(c(0,0.1,0.1,0.1), "cm"),
+                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                axis.ticks.x = element_blank())
+  
+      plot5_major<-ggplot(major, aes(x=proteinName, y=Incidence)) +
+          geom_violin(fill="#37AFAF",trim = TRUE, color="#37AFAF", adjust=adjust, bw=bw)+ylim(0,variants_max_yaxis)+ylab("Major variant (%)")+xlab("")+theme_bw() +
+          geom_boxplot(outlier.shape = NA,width=0.04, color="black", alpha=0.15,fill="white")+
+          theme_classic(base_size = base_size)+
+          theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
+                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                axis.ticks.x = element_blank(),
+                axis.text.y  = element_text(face="bold"))
+  
+      plot5_minor<-ggplot(minor, aes(x=proteinName, y=Incidence))+
+          geom_violin(fill="#42aaff",trim = TRUE,color="#42aaff", adjust=adjust, bw=bw)+ylim(0,variants_max_yaxis)+ylab("Minor variants (%)")+xlab("") +theme_bw() +
+          geom_boxplot(outlier.shape = NA,width=0.04, color="black", alpha=0.15,fill="white")+
+          theme_classic(base_size = base_size)+
+          theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
+                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                axis.ticks.x = element_blank(),
+                axis.text.y  = element_text(face="bold"))
+  
+      plot5_unique<-ggplot(unique, aes(x=proteinName, y=Incidence)) +
+          geom_violin(fill="#af10f1",trim = TRUE, color="#af10f1", adjust=adjust, bw=bw)+ylim(0,variants_max_yaxis)+ylab("Unique variants (%)")+xlab("")+theme_bw() +
+          geom_boxplot(outlier.shape = NA,width=0.05, color="black", alpha=0.15,fill="white")+
+          theme_classic(base_size = base_size)+
+          theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
+                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                axis.ticks.x = element_blank(),
+                axis.text.y  = element_text(face="bold"))
+  
+      plot5_nonatypes<-ggplot(nonatypes, aes(x=proteinName, y=Incidence)) +
+          geom_violin(fill="#c2c7cb",trim = TRUE, color="#c2c7cb", adjust=adjust, bw=bw)+ylim(0,100)+ylab("Distinct variants (%)")+xlab("")+theme_bw()+
+          geom_boxplot(outlier.shape = NA,width=0.05, color="black", alpha=0.15,fill="white") +
+          theme_classic(base_size = base_size)+
+          theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
+                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"),
+                axis.ticks.x = element_blank())
+      plot5<-ggarrange(plot5_index,plot5_tv,plot5_nonatypes,plot5_major,plot5_minor,plot5_unique,ncol=3,nrow=2)
+    } else {
+      plot5_data$Group[plot5_data$Group == "Index"] <- "Index k-mer" 
+      plot5_data$Group[plot5_data$Group == "Major"] <- "Major variant" 
+      plot5_data$Group[plot5_data$Group == "Minor"] <- "Minor variants" 
+      plot5_data$Group[plot5_data$Group == "Unique"] <- "Unique variants" 
+      
+      plot5_data$Group<-factor(plot5_data$Group, levels=c("Index k-mer","Total variants", "Distinct variants", "Major variant", "Minor variants", "Unique variants"))
+      variants<-subset(plot5_data, Group=="Major variant" | Group=="Minor variants" | Group=="Unique variants")
+      max_ylim<-ceiling((max(variants$Incidence)/10))*10
+      
+      # scales_y <- list(
+      #   "Index k-mer" = scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)),
+      #   "Total variants" = scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)),
+      #   "Distinct variants" = scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)),
+      #   "Major variant" = scale_y_continuous(limits = c(0, max_ylim), breaks = seq(0, max_ylim, 10)),
+      #   "Minor variants" = scale_y_continuous(limits = c(0, max_ylim), breaks = seq(0, max_ylim, 10)),
+      #   "Unique variants" = scale_y_continuous(limits = c(0, max_ylim), breaks = seq(0, max_ylim, 10))
+      # )
+      
+      breaks_fun <- function(x) {
+        if (max(x)<= max_ylim){
+          seq(0,max_ylim,10)
+        }else{
+          seq(0,100,20)
+        }
+      }
+      
+      limits_fun <- function(x) {
+        if (max(x)<= max_ylim){
+          c(0,max_ylim)
+        }else{
+          c(0,100)
+        }
+      }
+      
+      plot5<-ggplot()+
+        geom_violin(data=plot5_data,aes(x=proteinName,y=Incidence, fill=Group, color=Group), trim=TRUE, adjust=adjust, bw=bw)+
+        theme_classic(base_size = base_size)+xlab("Protein")+ylab("Incidence (%)\n")+
+        theme(panel.border = element_rect(colour = "black", fill=NA, size=1),
+              legend.position="none")+
+        scale_y_continuous(limits = limits_fun,breaks = breaks_fun)+
+        facet_grid(rows = vars(Group),switch="y",scales = 'free')+
+        scale_colour_manual('',values = c("Index k-mer"="black","Total variants"="#f7238a", "Major variant"="#37AFAF","Minor variants"="#42aaff","Unique variants"="#af10f1","Nonatypes"="#c2c7cb" ))+
+        scale_fill_manual('',values = c("Index k-mer"="black","Total variants"="#f7238a", "Major variant"="#37AFAF","Minor variants"="#42aaff","Unique variants"="#af10f1","Nonatypes"="#c2c7cb" ))
+      
+    }
+    
     #plot4_5
     ggarrange(plot4,plot5,ncol=1,heights = c(1,0.5))
 }

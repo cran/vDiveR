@@ -8,7 +8,8 @@ plot_correlation(
   df,
   host = 1,
   alpha = 1/3,
-  size = 3,
+  line_dot_size = 3,
+  base_size = 11,
   ylabel = "k-mer entropy (bits)\\n",
   xlabel = "\\nTotal variants (\%)",
   ymax = ceiling(max(df$entropy)),
@@ -22,7 +23,9 @@ plot_correlation(
 
 \item{alpha}{any number from 0 (transparent) to 1 (opaque)}
 
-\item{size}{dot size in scatter plot}
+\item{line_dot_size}{dot size in scatter plot}
+
+\item{base_size}{base font size in plot}
 
 \item{ylabel}{y-axis label}
 
@@ -41,5 +44,5 @@ of all the provided protein(s).
 }
 \examples{
 plot_correlation(proteins_1host)
-plot_correlation(protein_2hosts, size = 2, ybreak=1, ymax=10, host = 2)
+plot_correlation(protein_2hosts, base_size = 2, ybreak=1, ymax=10, host = 2)
 }

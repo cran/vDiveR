@@ -10,7 +10,7 @@
 #' @param kmer_size size of the k-mer window
 #' @param ymax maximum y-axis
 #' @param line_dot_size size of the line and dot in plot
-#' @param word_size size of the wordings in plot
+#' @param base_size word size in plot
 #' @param all plot both the entropy and total variants (pass FALSE in to plot only the entropy)
 #' @param highlight_zero_entropy highlight region with zero entropy (default: TRUE)
 #' @return A plot
@@ -19,7 +19,15 @@
 #' @importFrom ggplot2 geom_rect geom_area geom_hline geom_line facet_grid
 #' @importFrom ggplot2 sec_axis element_line scale_colour_manual scale_linetype_manual
 #' @export
-plot_entropy <- function(df,host=1,protein_order="",kmer_size=9, ymax = 10,line_dot_size=2,word_size=8, all= TRUE, highlight_zero_entropy=TRUE){
+plot_entropy <- function(df,
+                         host=1,
+                         protein_order="",
+                         kmer_size=9, 
+                         ymax = 10,
+                         line_dot_size=2,
+                         base_size=8,
+                         all= TRUE, 
+                         highlight_zero_entropy=TRUE){
     entropy <- end <- lowSupportPos <- totalVariants.incidence <- NULL
     #determine number of host
     #scale the amino acid position for each protein
@@ -121,7 +129,7 @@ plot_entropy <- function(df,host=1,protein_order="",kmer_size=9, ymax = 10,line_
         geom_hline(mapping = aes(yintercept=9.2, color = "Reference: Maximum Entropy (9.2) for HIV-1 Clade B (Env Protein)", linetype = "Reference: Maximum Entropy (9.2) for HIV-1 Clade B (Env Protein)"), linewidth= (line_dot_size/10))+
         labs(y = "k-mer entropy (bits)\n",x= "\nk-mer position (aa)",color = "#f7238a")+
         scale_x_continuous(limits = limits_fun,breaks = breaks_fun)+
-        theme_classic() +
+        theme_classic(base_size = base_size) +
         theme(
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),

@@ -8,7 +8,7 @@ concat_conserved_kmer(
   data,
   conservation_level = "HCS",
   kmer = 9,
-  output_type = "csv"
+  threshold_pct = NULL
 )
 }
 \arguments{
@@ -18,10 +18,10 @@ concat_conserved_kmer(
 
 \item{kmer}{size of the k-mer window}
 
-\item{output_type}{type of the output; "csv" or "fasta"}
+\item{threshold_pct}{manually set threshold of index.incidence for HCS}
 }
 \value{
-A dataframe
+A list wit csv and fasta dataframes
 }
 \description{
 This function concatenates completely (index incidence = 100%)/highly (90% <=
@@ -30,7 +30,7 @@ k-mer position or are adjacent to each other and generate the CCS/HCS sequence
 in either CSv or FASTA format
 }
 \examples{
-csv<-concat_conserved_kmer(proteins_1host)
-csv_2hosts<-concat_conserved_kmer(protein_2hosts, conservation_level = "CCS")
-fasta <- concat_conserved_kmer(protein_2hosts, output_type = "fasta", conservation_level = "HCS")
+csv<-concat_conserved_kmer(proteins_1host)$csv
+csv_2hosts<-concat_conserved_kmer(protein_2hosts, conservation_level = "CCS")$csv
+fasta <- concat_conserved_kmer(protein_2hosts, conservation_level = "HCS")$fasta
 }

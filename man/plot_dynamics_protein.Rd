@@ -10,7 +10,9 @@ plot_dynamics_protein(
   protein_order = "",
   base_size = 8,
   alpha = 1/3,
-  dot_size = 3
+  line_dot_size = 3,
+  bw = "nrd0",
+  adjust = 1
 )
 }
 \arguments{
@@ -24,7 +26,11 @@ plot_dynamics_protein(
 
 \item{alpha}{any number from 0 (transparent) to 1 (opaque)}
 
-\item{dot_size}{dot size in scatter plot}
+\item{line_dot_size}{dot size in scatter plot}
+
+\item{bw}{smoothing bandwidth of violin plot (default: nrd0)}
+
+\item{adjust}{adjust the width of violin plot (default: 1)}
 }
 \value{
 A plot

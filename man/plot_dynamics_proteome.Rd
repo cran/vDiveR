@@ -4,18 +4,30 @@
 \alias{plot_dynamics_proteome}
 \title{Dynamics of Diversity Motifs (Proteome) Plot}
 \usage{
-plot_dynamics_proteome(df, host = 1, dot_size = 2, word_size = 15, alpha = 1/3)
+plot_dynamics_proteome(
+  df,
+  host = 1,
+  line_dot_size = 2,
+  base_size = 15,
+  alpha = 1/3,
+  bw = "nrd0",
+  adjust = 1
+)
 }
 \arguments{
 \item{df}{DiMA JSON converted csv file data}
 
 \item{host}{number of host (1/2)}
 
-\item{dot_size}{size of dot in plot}
+\item{line_dot_size}{size of dot in plot}
 
-\item{word_size}{word size in plot}
+\item{base_size}{word size in plot}
 
 \item{alpha}{any number from 0 (transparent) to 1 (opaque)}
+
+\item{bw}{smoothing bandwidth of violin plot (default: nrd0)}
+
+\item{adjust}{adjust the width of violin plot (default: 1)}
 }
 \value{
 A plot

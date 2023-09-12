@@ -11,6 +11,7 @@
 #' @param conservation_label 0 (partial; show present conservation labels only) or 1 (full; show ALL conservation labels) in plot
 #' @param host number of host (1/2)
 #' @param base_size base font size in plot
+#' @param line_dot_size lines and dots size
 #' @param label_size conservation labels font size
 #' @param alpha any number from 0 (transparent) to 1 (opaque)
 #' @examples plot_conservationLevel(proteins_1host, conservation_label = 1,alpha=0.8, base_size = 15)
@@ -20,14 +21,24 @@
 #' @importFrom grid unit
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot_conservationLevel <- function(df, protein_order="",conservation_label=1,host=1, base_size = 11, label_size = 2.6, alpha=0.6){
-    df<-df%>%mutate(ConservationLevel = case_when(
+plot_conservationLevel <- function(df, 
+                                   protein_order="",
+                                   conservation_label=1,
+                                   host=1, 
+                                   base_size = 11, 
+                                   line_dot_size = 2,
+                                   label_size = 2.6, 
+                                   alpha=0.6){
+  df <- df %>% data.frame() %>%
+    mutate(
+      ConservationLevel = case_when(
         df$index.incidence == 100 ~ "Completely conserved (CC)",
         df$index.incidence >= 90 ~ "Highly conserved (HC)",
         df$index.incidence >= 20 ~ "Mixed variable (MV)",
         df$index.incidence >= 10  ~ "Highly diverse (HD)",
         df$index.incidence < 10 ~ "Extremely diverse (ED)"
-    ))
+      )
+    )
 
     #single host
     if (host == 1){
@@ -50,7 +61,13 @@ plot_conservationLevel <- function(df, protein_order="",conservation_label=1,hos
 #' @importFrom gghalves geom_half_boxplot geom_half_point
 #' @importFrom ggtext geom_richtext
 #plotting function
-plot_plot7<- function(data,protein_order="",conservation_label=1, base_size = 11, label_size = 2.6, alpha =0.6){
+plot_plot7<- function(data,
+                      protein_order="",
+                      conservation_label=1, 
+                      base_size = 11, 
+                      line_dot_size = 2,
+                      label_size = 2.6, 
+                      alpha =0.6){
     proteinName <- Total <- index.incidence <- NULL
     Label <- ConservationLevel <- NULL
     #add word 'protein' in front of each protein name
@@ -77,7 +94,11 @@ plot_plot7<- function(data,protein_order="",conservation_label=1, base_size = 11
     plot7_data<-ddply(data,.(proteinName,ConservationLevel),nrow)
     names(plot7_data)[3]<-"Total"
 
-    C_level<- c("Completely conserved (CC)","Highly conserved (HC)","Mixed variable (MV)","Highly diverse (HD)","Extremely diverse (ED)")
+    C_level<- c("Completely conserved (CC)",
+                "Highly conserved (HC)",
+                "Mixed variable (MV)",
+                "Highly diverse (HD)",
+                "Extremely diverse (ED)")
     #check the presence of conservation level: insert value 0 if it is absent
     if (conservation_label == 1){ #full label
         #check the presence of conservation level: insert value 0 if it is absent
@@ -109,7 +130,12 @@ plot_plot7<- function(data,protein_order="",conservation_label=1, base_size = 11
     ))
 
     #set conservation level in specific order (CC,HC,MV,HD,ED)
-    plot7_data<-plot7_data[order(factor(plot7_data$ConservationLevel, levels=c("Completely conserved (CC)","Highly conserved (HC)","Mixed variable (MV)","Highly diverse (HD)","Extremely diverse (ED)"))),]
+    plot7_data<-plot7_data[order(factor(plot7_data$ConservationLevel, 
+                                        levels=c("Completely conserved (CC)",
+                                                 "Highly conserved (HC)",
+                                                 "Mixed variable (MV)",
+                                                 "Highly diverse (HD)",
+                                                 "Extremely diverse (ED)"))),]
 
     #combine all conservation level labels into one for each protein
     Proteinlabel<- aggregate(Label~proteinName, plot7_data, paste, collapse="<br>")
@@ -121,7 +147,8 @@ plot_plot7<- function(data,protein_order="",conservation_label=1, base_size = 11
         # gghalfves
         geom_half_boxplot(outlier.shape = NA) +
         geom_half_point(aes(col = ConservationLevel), side = "r",
-                        position = position_jitter(width = 0, height=-0.7),alpha=alpha) +
+                        position = position_jitter(width = 0, height=-0.7),
+                        size=line_dot_size, alpha=alpha) +
         ylim(0,105) +
         labs(x=NULL, y="Index incidence (%)\n", fill="Conservation level")+
         theme_classic(base_size = base_size)+

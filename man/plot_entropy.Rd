@@ -11,7 +11,7 @@ plot_entropy(
   kmer_size = 9,
   ymax = 10,
   line_dot_size = 2,
-  word_size = 8,
+  base_size = 8,
   all = TRUE,
   highlight_zero_entropy = TRUE
 )
@@ -29,7 +29,7 @@ plot_entropy(
 
 \item{line_dot_size}{size of the line and dot in plot}
 
-\item{word_size}{size of the wordings in plot}
+\item{base_size}{word size in plot}
 
 \item{all}{plot both the entropy and total variants (pass FALSE in to plot only the entropy)}
 

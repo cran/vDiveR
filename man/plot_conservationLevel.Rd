@@ -10,6 +10,7 @@ plot_conservationLevel(
   conservation_label = 1,
   host = 1,
   base_size = 11,
+  line_dot_size = 2,
   label_size = 2.6,
   alpha = 0.6
 )
@@ -24,6 +25,8 @@ plot_conservationLevel(
 \item{host}{number of host (1/2)}
 
 \item{base_size}{base font size in plot}
+
+\item{line_dot_size}{lines and dots size}
 
 \item{label_size}{conservation labels font size}
 
