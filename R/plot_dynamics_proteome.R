@@ -17,13 +17,13 @@
 plot_dynamics_proteome <- function(df,
                                    host=1,
                                    line_dot_size=2,
-                                   base_size=15, 
+                                   base_size=15,
                                    alpha=1/3,
                                    bw = "nrd0",
                                    adjust = 1){
     #single host
     if (host == 1){
-        plot3(data=df,  base_size= base_size, alpha=alpha, line_dot_size=line_dot_size, bw = bw, adjust = adjust)
+        plot3(data=df, base_size= base_size, alpha=alpha, line_dot_size=line_dot_size, bw = bw, adjust = adjust)
     }else{ #multihost
         #split the data into multiple subsets (if multiple hosts detected)
         plot3_list<-split(df,df$host)
@@ -44,7 +44,7 @@ plot3<-function(data,
                 base_size=15,
                 host = 1,
                 alpha=1/3,
-                bw = "nrd0", 
+                bw = "nrd0",
                 adjust = 1){
 
     Total_Variants <- Incidence <- Group <- x <- NULL
@@ -76,13 +76,13 @@ plot3<-function(data,
     ))
     plot3_data<- rbind(plot3_data,minor,uniq)
     plot3_data$motif<-factor(plot3_data$motif,levels = c("Major","Minor","Unique","Distinct variants"))
-    
+
     if (host == 1){ #one host
       ROW=1
-    }else{ 
+    }else{
       ROW=2
     }
-    
+
     #plotting 3a
     plot3a<-ggplot()+geom_point(plot3_data,mapping=aes(x=Total_Variants,y=Incidence,color=Group),alpha=alpha,size= line_dot_size)+
         geom_point(plot3_data,mapping = aes(x =Total_Variants,y=Incidence),col=ifelse(plot3_data$multiIndex== TRUE & plot3_data$Group== "Index", 'red', ifelse(plot3_data$multiIndex== FALSE, 'white', 'white')), alpha=ifelse(plot3_data$multiIndex ==TRUE & plot3_data$Group== "Index", 1, ifelse(plot3_data$multiIndex== TRUE, 0,0)),pch=1,size=3,stroke=1.05)+ #multiIndex

@@ -8,7 +8,7 @@
 <!-- badges: end -->
 
 To ease the visualization of outputs from Diversity Motif Analyser ('DiMA';
-<https://github.com/PU-SDS/DiMA>). 'vDiveR' allows visualization of the diversity
+<https://github.com/BVU-BILSAB/DiMA>). 'vDiveR' allows visualization of the diversity
 motifs (index and its variants – major, minor and unique) for elucidation of
 the underlying inherent dynamics. Please refer <https://vdiver-manual.readthedocs.io/en/latest/>
 for more information.
