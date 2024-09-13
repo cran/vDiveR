@@ -3,7 +3,7 @@
 \docType{data}
 \name{JSON_sample}
 \alias{JSON_sample}
-\title{DiMA (v4.1.1) JSON Output File}
+\title{DiMA (v5.0.9) JSON Output File}
 \format{
 A Diversity Motif Analyzer (DiMA) tool JSON file
 }

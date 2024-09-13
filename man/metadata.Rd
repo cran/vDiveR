@@ -8,7 +8,7 @@
 A data frame with 1000 rows and 3 variables:
 \describe{
   \item{ID}{unique identifier of the sequence}
-  \item{country}{country of the sequence collection}
+  \item{region}{geographical region of the sequence collection}
   \item{date}{collection date of the sequence}
 }
 }

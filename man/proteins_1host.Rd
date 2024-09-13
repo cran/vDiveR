@@ -3,7 +3,7 @@
 \docType{data}
 \name{proteins_1host}
 \alias{proteins_1host}
-\title{DiMA (v4.1.1) JSON converted-CSV Output Sample 1}
+\title{DiMA (v5.0.9) JSON converted-CSV Output Sample 1}
 \format{
 A data frame with 806 rows and 17 variables:
 \describe{

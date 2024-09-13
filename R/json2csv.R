@@ -1,6 +1,6 @@
 #' JSON2CSV
 #'
-#' This function converts DiMA (v4.1.1) JSON output file to a dataframe with 17
+#' This function converts DiMA (v5.0.9) JSON output file to a dataframe with 17
 #' predefined columns which further acts as the input for other functions provided in this vDiveR package.
 #'
 #' @param json_data DiMA JSON output dataframe

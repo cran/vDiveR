@@ -21,7 +21,7 @@ json2csv(
 A dataframe which acts as input for the other functions in vDiveR package
 }
 \description{
-This function converts DiMA (v4.1.1) JSON output file to a dataframe with 17
+This function converts DiMA (v5.0.9) JSON output file to a dataframe with 17
 predefined columns which further acts as the input for other functions provided in this vDiveR package.
 }
 \examples{

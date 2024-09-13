@@ -1,4 +1,4 @@
-#' DiMA (v4.1.1) JSON converted-CSV Output Sample 1
+#' DiMA (v5.0.9) JSON converted-CSV Output Sample 1
 #'
 #' A dummy dataset with two proteins (A and B) from one host, human
 #'
@@ -25,7 +25,7 @@
 #' }
 "proteins_1host"
 
-#' DiMA (v4.1.1) JSON converted-CSV Output Sample 2
+#' DiMA (v5.0.9) JSON converted-CSV Output Sample 2
 #'
 #' A dummy dataset with 1 protein (Core) from two hosts, human and bat
 #'
@@ -52,7 +52,7 @@
 #' }
 "protein_2hosts"
 
-#' DiMA (v4.1.1) JSON Output File
+#' DiMA (v5.0.9) JSON Output File
 #'
 #' A sample DiMA JSON Output File which acts as the input for JSON2CSV()
 #'
@@ -68,7 +68,7 @@
 #' @format A data frame with 1000 rows and 3 variables:
 #' \describe{
 #'   \item{ID}{unique identifier of the sequence}
-#'   \item{country}{country of the sequence collection}
+#'   \item{region}{geographical region of the sequence collection}
 #'   \item{date}{collection date of the sequence}
 #' }
 "metadata"

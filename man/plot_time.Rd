@@ -9,12 +9,11 @@ plot_time(
   date_format = "\%Y-\%m-\%d",
   base_size = 8,
   date_break = "2 month",
-  scale = "count",
-  only_plot = F
+  scale = "count"
 )
 }
 \arguments{
-\item{metadata}{a dataframe with 3 columns, 'ID', 'country', and 'date'}
+\item{metadata}{a dataframe with 3 columns, 'ID', 'region', and 'date'}
 
 \item{date_format}{date format of the input dataframe}
 
@@ -23,8 +22,6 @@ plot_time(
 \item{date_break}{date break for the scale_x_date}
 
 \item{scale}{plot counts or log scale the data}
-
-\item{only_plot}{logical, return only plot or dataframe info as well, default FALSE}
 }
 \value{
 A single plot or a list with 2 elements (a plot followed by a dataframe, default)
@@ -35,6 +32,6 @@ This function plots the time distribution of provided sequences in the form of b
 The input dataframe of this function is obtainable from metadata_extraction(), with NCBI Protein / GISAID EpiCoV FASTA file as input.
 }
 \examples{
-time_plot <- plot_time(metadata)$plot
-time_df <- plot_time(metadata)$df
+time_plot <- plot_time(metadata, date_format="\%d/\%m/\%Y")$plot
+time_df <- plot_time(metadata, date_format="\%d/\%m/\%Y")$df
 }
