@@ -8,7 +8,7 @@ plot_dynamics_proteome(
   df,
   host = 1,
   line_dot_size = 2,
-  base_size = 15,
+  base_size = 10,
   alpha = 1/3,
   bw = "nrd0",
   adjust = 1

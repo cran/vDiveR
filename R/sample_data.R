@@ -62,7 +62,7 @@
 
 #' Metadata Input Sample
 #'
-#' A dummy dataset that acts as an input for plot_worldmap() and plot_time()
+#' A dummy dataset that acts as an input for plot_world_map() and plot_time()
 #'
 #'
 #' @format A data frame with 1000 rows and 3 variables:

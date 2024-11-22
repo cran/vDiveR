@@ -16,6 +16,6 @@ A data frame with 1000 rows and 3 variables:
 metadata
 }
 \description{
-A dummy dataset that acts as an input for plot_worldmap() and plot_time()
+A dummy dataset that acts as an input for plot_world_map() and plot_time()
 }
 \keyword{datasets}

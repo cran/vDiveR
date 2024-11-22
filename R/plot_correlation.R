@@ -35,7 +35,7 @@ plot_correlation <- function(df,
         scale_y_continuous(limits = c(0, ymax), breaks = seq(0, ymax, ybreak))+
         theme_classic(base_size = base_size)+
         theme(
-            panel.border = element_rect(colour = "#000000", fill=NA, size=1)
+            panel.border = element_rect(colour = "#000000", fill=NA, linewidth=1)
         )
 
     if (host == 1){ #single host

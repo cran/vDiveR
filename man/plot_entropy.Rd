@@ -10,7 +10,7 @@ plot_entropy(
   protein_order = "",
   kmer_size = 9,
   ymax = 10,
-  line_dot_size = 2,
+  line_size = 2,
   base_size = 8,
   all = TRUE,
   highlight_zero_entropy = TRUE
@@ -27,7 +27,7 @@ plot_entropy(
 
 \item{ymax}{maximum y-axis}
 
-\item{line_dot_size}{size of the line and dot in plot}
+\item{line_size}{size of the horizontal (reference) line in plot}
 
 \item{base_size}{word size in plot}
 

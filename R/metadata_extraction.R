@@ -1,4 +1,4 @@
-#' Metadata Extraction from NCBI/GISAID EpiCoV FASTA file
+#' Metadata Extraction from NCBI/GISAID (EpiFlu/EpiCoV/EpiPox/EpiArbo) FASTA file
 #'
 #' This function retrieves metadata (ID, region, date) from the input FASTA file, with the source of, either 
 #' NCBI (with default FASTA header) or GISAID (with default FASTA header). The function will return a dataframe

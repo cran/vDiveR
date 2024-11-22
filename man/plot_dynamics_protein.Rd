@@ -7,7 +7,7 @@
 plot_dynamics_protein(
   df,
   host = 1,
-  protein_order = "",
+  protein_order = NULL,
   base_size = 8,
   alpha = 1/3,
   line_dot_size = 3,

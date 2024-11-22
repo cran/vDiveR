@@ -29,7 +29,7 @@ A single plot or a list with 2 elements (a plot followed by a dataframe, default
 \description{
 This function plots the time distribution of provided sequences in the form of bar plot with 'Month' as x-axis and
 'Number of Sequences' as y-axis. Aside from the plot, this function also returns a dataframe with 2 columns: 'Date' and 'Number of sequences'.
-The input dataframe of this function is obtainable from metadata_extraction(), with NCBI Protein / GISAID EpiCoV FASTA file as input.
+The input dataframe of this function is obtainable from metadata_extraction(), with NCBI Protein / GISAID (EpiFlu/EpiCoV/EpiPox/EpiArbo) FASTA file as input.
 }
 \examples{
 time_plot <- plot_time(metadata, date_format="\%d/\%m/\%Y")$plot

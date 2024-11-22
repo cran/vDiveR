@@ -2,7 +2,7 @@
 % Please edit documentation in R/metadata_extraction.R
 \name{metadata_extraction}
 \alias{metadata_extraction}
-\title{Metadata Extraction from NCBI/GISAID EpiCoV FASTA file}
+\title{Metadata Extraction from NCBI/GISAID (EpiFlu/EpiCoV/EpiPox/EpiArbo) FASTA file}
 \usage{
 metadata_extraction(file_path, source)
 }

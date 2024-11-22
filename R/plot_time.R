@@ -2,7 +2,7 @@
 #'
 #' This function plots the time distribution of provided sequences in the form of bar plot with 'Month' as x-axis and
 #' 'Number of Sequences' as y-axis. Aside from the plot, this function also returns a dataframe with 2 columns: 'Date' and 'Number of sequences'.
-#' The input dataframe of this function is obtainable from metadata_extraction(), with NCBI Protein / GISAID EpiCoV FASTA file as input.
+#' The input dataframe of this function is obtainable from metadata_extraction(), with NCBI Protein / GISAID (EpiFlu/EpiCoV/EpiPox/EpiArbo) FASTA file as input.
 #'
 #' @param metadata a dataframe with 3 columns, 'ID', 'region', and 'date'
 #' @param base_size word size in plot

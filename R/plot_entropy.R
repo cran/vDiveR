@@ -9,7 +9,7 @@
 #' @param protein_order order of proteins displayed in plot
 #' @param kmer_size size of the k-mer window
 #' @param ymax maximum y-axis
-#' @param line_dot_size size of the line and dot in plot
+#' @param line_size size of the horizontal (reference) line in plot
 #' @param base_size word size in plot
 #' @param all plot both the entropy and total variants (pass FALSE in to plot only the entropy)
 #' @param highlight_zero_entropy highlight region with zero entropy (default: TRUE)
@@ -24,15 +24,18 @@ plot_entropy <- function(df,
                          protein_order="",
                          kmer_size=9, 
                          ymax = 10,
-                         line_dot_size=2,
+                         line_size=2,
                          base_size=8,
                          all= TRUE, 
                          highlight_zero_entropy=TRUE){
     entropy <- end <- lowSupportPos <- totalVariants.incidence <- NULL
+    
+    df$proteinName <- toupper(df$proteinName)
+
     #determine number of host
     #scale the amino acid position for each protein
     if (host ==1){ #single host
-        if (protein_order ==""){
+        if (protein_order =="" || is.null(protein_order) || protein_order == "NULL"){
             a<-table(df$proteinName)
             proteinName<-as.vector(names(a))
             position<-as.vector(a)
@@ -43,6 +46,7 @@ plot_entropy <- function(df,
         }else{
             #order the proteins based on user input
             level<-strsplit(protein_order, ',')[[1]]
+            level<- sapply(level, function(x) toupper(trimws(x)))
             position<-c()
             for (i in level){
                 position<-append(position,table(df$proteinName)[names(table(df$proteinName)) == i])
@@ -57,7 +61,7 @@ plot_entropy <- function(df,
         df$host<- factor(df$host)
         #count the aa length for each proteins (each host is expected to have same number of proteins with same length)
         df_sub<-df[df$host==unique(df$host[1]),]
-        if (protein_order ==""){
+        if (protein_order =="" || is.null(protein_order) || protein_order == "NULL"){
             a<-table(df_sub$proteinName)
             proteinName<-as.vector(names(a))
             position<-as.vector(a)
@@ -68,6 +72,7 @@ plot_entropy <- function(df,
         }else{
             #order the proteins based on user input
             level<-strsplit(protein_order, ',')[[1]]
+            level<- sapply(level, function(x) toupper(trimws(x)))
             position<-c()
             for (i in level){
                 position<-append(position,table(df_sub$proteinName)[names(table(df_sub$proteinName)) == i])
@@ -104,12 +109,11 @@ plot_entropy <- function(df,
     }
     
     #---------------set maximum y limit-----------------#
-    #if the max y value in data < 10 => ymax = 10
-    #if max y value in data > 10 => ymax = ceiling(max y value)
-    if (max(df$entropy) <= 10){
-       ymax <-10.0
-    }else if (max(df$entropy) > 10){
+    #if the max y value set by user is less than the max y value in data, then set the max y value to the max y value in data
+    if (ymax < max(df$entropy) && max(df$entropy) > 10){
        ymax <- ceiling(max(df$entropy))
+    } else if (ymax < 10){ # to ensure the reference hline is visible
+        ymax <- 10
     }
 
     breaks_fun <- function(x) {
@@ -126,7 +130,7 @@ plot_entropy <- function(df,
 
     plot1<-ggplot(df) +
         geom_area(mapping = aes(x = position, y = entropy,color= "k-mer Entropy", linetype="k-mer Entropy"), show.legend=F)+
-        geom_hline(mapping = aes(yintercept=9.2, color = "Reference: Maximum Entropy (9.2) for HIV-1 Clade B (Env Protein)", linetype = "Reference: Maximum Entropy (9.2) for HIV-1 Clade B (Env Protein)"), linewidth= (line_dot_size/10))+
+        geom_hline(mapping = aes(yintercept=9.2, color = "Reference: Maximum Entropy (9.2) for HIV-1 Clade B (Env Protein)", linetype = "Reference: Maximum Entropy (9.2) for HIV-1 Clade B (Env Protein)"), linewidth= (line_size/10))+
         labs(y = "k-mer entropy (bits)\n",x= "\nk-mer position (aa)",color = "#f7238a")+
         scale_x_continuous(limits = limits_fun,breaks = breaks_fun)+
         theme_classic(base_size = base_size) +
@@ -143,7 +147,8 @@ plot_entropy <- function(df,
                                         "k-mer Entropy" = "black"),
                             guide = guide_legend(override.aes=aes(fill=NA)))+
         scale_linetype_manual("",values=c("Reference: Maximum Entropy (9.2) for HIV-1 Clade B (Env Protein)"=5,
-                                            "k-mer Entropy" = 1))
+                                            "k-mer Entropy" = 1)) +
+        ylim(0, ymax)
 
         
     # detect if low support present
@@ -163,8 +168,8 @@ plot_entropy <- function(df,
 
     # plot both entropy and total variants
     if(all){
-        plot1<- plot1 + geom_line(mapping = aes(x = position, y = totalVariants.incidence * ymax / 100, color = "Total Variants",linetype="Total Variants"), linewidth= (line_dot_size/10) )+
-        geom_hline(mapping = aes( yintercept=98* ymax / 100, color = "Reference: Maximum Total Variants (98%) for HIV-1 Clade B (Env Protein)",linetype ="Reference: Maximum Total Variants (98%) for HIV-1 Clade B (Env Protein)"), linewidth= (line_dot_size/10))+
+        plot1<- plot1 + geom_line(mapping = aes(x = position, y = totalVariants.incidence * ymax / 100, color = "Total Variants",linetype="Total Variants"), linewidth= (line_size/10) )+
+        geom_hline(mapping = aes( yintercept=98* ymax / 100, color = "Reference: Maximum Total Variants (98%) for HIV-1 Clade B (Env Protein)",linetype ="Reference: Maximum Total Variants (98%) for HIV-1 Clade B (Env Protein)"), linewidth= (line_size/10))+
         #how to second y-axis: https://whatalnk.github.io/r-tips/ggplot2-rbind.nb.html
         scale_y_continuous(sec.axis = sec_axis(~ . * 100 / ymax , name = "Total variants (%)",breaks = c(0,25,50,75,100),labels=c("0","25","50","75","100")),
                             breaks = seq(0.0, ymax, length.out = 5),labels= sprintf(seq(0.0, ymax, length.out = 5), fmt = "%.1f")) +

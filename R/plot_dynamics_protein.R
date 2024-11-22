@@ -13,11 +13,11 @@
 #' @param adjust adjust the width of violin plot (default: 1)
 #' @return A plot
 #' @examples plot_dynamics_protein(proteins_1host)
-#' @importFrom gridExtra grid.arrange
+#' @importFrom cowplot plot_grid
 #' @export
 plot_dynamics_protein<-function(df, 
                                 host=1, 
-                                protein_order="", 
+                                protein_order=NULL, 
                                 base_size=8, 
                                 alpha = 1/3, 
                                 line_dot_size = 3,
@@ -25,15 +25,17 @@ plot_dynamics_protein<-function(df,
                                 adjust = 1){
     #single host
     if (host == 1){
-        plot4_5(data=df, protein_order=protein_order, base_size=base_size,alpha=alpha,  line_dot_size=line_dot_size, bw = bw, adjust = adjust)
+        generate_protein_plots(data=df, protein_order=protein_order, base_size=base_size,alpha=alpha,  line_dot_size=line_dot_size, bw = bw, adjust = adjust)
     }else{ #multihost
         #split the data into multiple subsets (if multiple hosts detected)
-        plot4_list<-split(df,df$host)
-        plot4_multihost<-lapply(plot4_list,plot4_5,protein_order, alpha, line_dot_size, base_size, host, bw, adjust)
+        data_list<-split(df,df$host)
+        multihost_plots <- lapply(data_list, function(df) {      
+          generate_protein_plots(df, protein_order = protein_order, base_size = base_size, alpha = alpha,
+                  line_dot_size = line_dot_size, bw = bw, adjust = adjust, host=host)
+        })
 
-        #create spacing between multihost plots
-        theme = theme(plot.margin = unit(c(0.5,1.0,0.1,0.5), "cm"))
-        do.call("grid.arrange", c(grobs=lapply(plot4_multihost,"+",theme), ncol = length(unique(df$host))))
+        plot_grid(plotlist = multihost_plots,
+              ncol = length(unique(df$host)))
     }
 }
 
@@ -41,7 +43,8 @@ plot_dynamics_protein<-function(df,
 #' @importFrom ggplot2 geom_violin geom_boxplot ylim scale_color_grey margin element_line
 #' @importFrom ggplot2 scale_fill_manual theme_bw facet_grid xlab ylab
 #' @importFrom ggpubr annotate_figure ggarrange text_grob
-plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8, host=1, bw = "nrd0", adjust = 1){
+#' @importFrom cowplot plot_grid
+generate_protein_plots<-function(data, protein_order=NULL,alpha=1/3, line_dot_size=3, base_size=8, host=1, bw = "nrd0", adjust = 1){
     Total_Variants <- Incidence <- Group <- x <- proteinName <- entropy <- NULL
 
     plot4_data<-data.frame()
@@ -52,23 +55,24 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
 
     for (i in 7:12){
         tmp<-data.frame(proteinName=data[1],position=data[2],incidence=data[i],total_variants=data[11],Group=group_names[i-6],Multiindex=data[13])
-        #multiple host
-        if (host != 1) {
-          tmp$host = data[14]
-        }
+
         names(tmp)[3]<-"Incidence"
         names(tmp)[4]<-"Total_Variants"
         plot4_data<-rbind(plot4_data,tmp)
     }
 
-    if (protein_order !=""){
+    plot4_data$proteinName <- toupper(plot4_data$proteinName)
+    if (!is.null(protein_order) && protein_order != ""){
         #order the proteins based on user input
+        protein_order <- toupper(trimws(protein_order))
         level<-strsplit(protein_order, ',')[[1]]
+        level <- sapply(level, function(x) toupper(trimws(x)))
         #set protein order as factor
+        
         plot4_data$proteinName<-factor(plot4_data$proteinName, levels=level)
         plot4_data$size_f = factor(plot4_data$proteinName,levels = level)
     }
-
+    plot4_data$Group<-factor(plot4_data$Group, levels=c("Index","Total variants", "Major", "Minor", "Unique", "Distinct variants"))
     plot5_data<-plot4_data
 
     #plot plot 4
@@ -79,9 +83,9 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
         theme_classic(base_size = base_size)+
         theme(
             legend.background = element_rect(fill = "transparent"),
-            panel.border = element_rect(colour = "black", fill=NA, size=1),
+            panel.border = element_rect(colour = "black", fill=NA, linewidth=1),
             legend.position = "bottom"
-        )+ guides(colour = guide_legend(override.aes = list(alpha = 1,size=2),keywidth = 1,keyheight = 1,nrow=1,byrow=TRUE))+
+        )+ guides(colour = guide_legend(override.aes = list(alpha = 1,size=2),keywidth = 1,keyheight = 0.1,nrow=1, byrow=TRUE))+
         scale_colour_manual('',values = c("Index"="black","Total variants"="#f7238a", "Major"="#37AFAF","Minor"="#42aaff","Unique"="#af10f1","Distinct variants"="#c2c7cb" ))
     plot4<-plot4+facet_grid(cols=vars(plot4_data$proteinName))
 
@@ -106,7 +110,7 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
           geom_boxplot(outlier.shape = NA,width=0.05, color="white",alpha=0.15,fill="white")+
           theme_classic(base_size = base_size)+
           theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                panel.border = element_rect(colour = "black", fill=NA, linewidth=1),
                 axis.ticks.x = element_blank())
   
       plot5_tv<-ggplot(index, aes(x=proteinName, y=Total_Variants))+
@@ -114,7 +118,7 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
           geom_boxplot(outlier.shape = NA,width=0.05, color="black",alpha=0.15,fill="white")+
           theme_classic(base_size = base_size)+
           theme(plot.margin = unit(c(0,0.1,0.1,0.1), "cm"),
-                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                panel.border = element_rect(colour = "black", fill=NA, linewidth=1),
                 axis.ticks.x = element_blank())
   
       plot5_major<-ggplot(major, aes(x=proteinName, y=Incidence)) +
@@ -122,7 +126,7 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
           geom_boxplot(outlier.shape = NA,width=0.04, color="black", alpha=0.15,fill="white")+
           theme_classic(base_size = base_size)+
           theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                panel.border = element_rect(colour = "black", fill=NA, linewidth=1),
                 axis.ticks.x = element_blank(),
                 axis.text.y  = element_text(face="bold"))
   
@@ -131,7 +135,7 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
           geom_boxplot(outlier.shape = NA,width=0.04, color="black", alpha=0.15,fill="white")+
           theme_classic(base_size = base_size)+
           theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                panel.border = element_rect(colour = "black", fill=NA, linewidth=1),
                 axis.ticks.x = element_blank(),
                 axis.text.y  = element_text(face="bold"))
   
@@ -140,7 +144,7 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
           geom_boxplot(outlier.shape = NA,width=0.05, color="black", alpha=0.15,fill="white")+
           theme_classic(base_size = base_size)+
           theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                panel.border = element_rect(colour = "black", fill=NA, linewidth=1),
                 axis.ticks.x = element_blank(),
                 axis.text.y  = element_text(face="bold"))
   
@@ -149,8 +153,8 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
           geom_boxplot(outlier.shape = NA,width=0.05, color="black", alpha=0.15,fill="white") +
           theme_classic(base_size = base_size)+
           theme(plot.margin = unit(c(0,0.1,0,0.1), "cm"),
-                panel.border = element_rect(colour = "black", fill=NA, size=1),
-                axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"),
+                panel.border = element_rect(colour = "black", fill=NA, linewidth=1),
+                axis.line.x = element_line(linewidth = 0.5, linetype = "solid", colour = "black"),
                 axis.ticks.x = element_blank())
       plot5<-ggarrange(plot5_index,plot5_tv,plot5_nonatypes,plot5_major,plot5_minor,plot5_unique,ncol=3,nrow=2)
     } else {
@@ -162,15 +166,6 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
       plot5_data$Group<-factor(plot5_data$Group, levels=c("Index k-mer","Total variants", "Distinct variants", "Major variant", "Minor variants", "Unique variants"))
       variants<-subset(plot5_data, Group=="Major variant" | Group=="Minor variants" | Group=="Unique variants")
       max_ylim<-ceiling((max(variants$Incidence)/10))*10
-      
-      # scales_y <- list(
-      #   "Index k-mer" = scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)),
-      #   "Total variants" = scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)),
-      #   "Distinct variants" = scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)),
-      #   "Major variant" = scale_y_continuous(limits = c(0, max_ylim), breaks = seq(0, max_ylim, 10)),
-      #   "Minor variants" = scale_y_continuous(limits = c(0, max_ylim), breaks = seq(0, max_ylim, 10)),
-      #   "Unique variants" = scale_y_continuous(limits = c(0, max_ylim), breaks = seq(0, max_ylim, 10))
-      # )
       
       breaks_fun <- function(x) {
         if (max(x)<= max_ylim){
@@ -191,7 +186,7 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
       plot5<-ggplot()+
         geom_violin(data=plot5_data,aes(x=proteinName,y=Incidence, fill=Group, color=Group), trim=TRUE, adjust=adjust, bw=bw)+
         theme_classic(base_size = base_size)+xlab("Protein")+ylab("Incidence (%)\n")+
-        theme(panel.border = element_rect(colour = "black", fill=NA, size=1),
+        theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=1),
               legend.position="none")+
         scale_y_continuous(limits = limits_fun,breaks = breaks_fun)+
         facet_grid(rows = vars(Group),switch="y",scales = 'free')+
@@ -201,9 +196,6 @@ plot4_5<-function(data, protein_order="",alpha=1/3, line_dot_size=3, base_size=8
     }
     
     #plot4_5
-    ggarrange(plot4,plot5,ncol=1,heights = c(1,0.5))
+    plot_grid(plot4, plot5, ncol = 1, rel_heights = c(1, 0.5))
 }
-
-
-
 

@@ -70,7 +70,8 @@ json2csv <-function(json_data, host_name="unknown host", protein_name="unknown p
     colnames(motifs)<-c('position','index.incidence','major.incidence','minor.incidence','unique.incidence','multiIndex','proteinName','count','lowSupport','entropy','distinctVariant.incidence','totalVariants.incidence','indexSequence','highestEntropy.position','highestEntropy','averageEntropy','host')
     #reorder the columns
     motifs<-motifs[,c(7,1,8,9,10,13,2,3,4,5,12,11,6,17,14,15,16)]
-
+    #assign protein name
+    motifs['proteinName'] <- protein_name
     motifs
 
 }
