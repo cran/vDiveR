@@ -21,13 +21,13 @@
 #' @importFrom grid unit
 #' @importFrom cowplot plot_grid
 #' @export
-plot_conservation_level <- function(df, 
+plot_conservation_level <- function(df,
                                    protein_order=NULL,
                                    conservation_label=1,
-                                   host=1, 
-                                   base_size = 11, 
+                                   host=1,
+                                   base_size = 11,
                                    line_dot_size = 2,
-                                   label_size = 2.6, 
+                                   label_size = 2.6,
                                    alpha=0.6){
     df <- df %>% data.frame() %>%
         dplyr::mutate(
@@ -63,16 +63,16 @@ plot_conservation_level <- function(df,
 
 
 #' @importFrom ggplot2 position_jitter scale_colour_manual
-#' @importFrom ggplot2 position_dodge coord_cartesian
+#' @importFrom ggplot2 position_dodge coord_cartesian geom_jitter
 #' @importFrom gghalves geom_half_boxplot geom_half_point
 #' @importFrom ggtext geom_richtext
 #plotting function
 plot_plot7<- function(data,
                       protein_order=NULL,
-                      conservation_label=1, 
-                      base_size = 11, 
+                      conservation_label=1,
+                      base_size = 11,
                       line_dot_size = 2,
-                      label_size = 2.6, 
+                      label_size = 2.6,
                       alpha =0.6){
     proteinName <- Total <- index.incidence <- NULL
     label <- ConservationLevel <- level_data <- NULL
@@ -148,7 +148,7 @@ plot_plot7<- function(data,
 
     # set conservation level in specific order (CC,HC,MV,HD,ED)
     # Ensure 'conservation' is a factor with all the levels
-    plot7_data$ConservationLevel <- factor(plot7_data$ConservationLevel, 
+    plot7_data$ConservationLevel <- factor(plot7_data$ConservationLevel,
                                         levels=C_level)
     plot7_data<-plot7_data[order(plot7_data$ConservationLevel),]
 
@@ -173,12 +173,22 @@ plot_plot7<- function(data,
 
     #--- plotting ----
     ggplot(data %>% filter(level_data == 1) , aes(x=level,y=index.incidence)) +
-        geom_half_boxplot(outlier.shape = NA) +
-        geom_half_point(aes(col = ConservationLevel), side = "r",
-                        position = position_jitter(width = 0, height=-0.7),
-                        size=line_dot_size, alpha=alpha, show.legend = TRUE) +
-        ylim(0,105) +
-        labs(x=NULL, y="Index incidence (%)\n", fill="Conservation level")+
+        # if gghalves is installed, use a true half box; else, a normal box
+        {
+            if (requireNamespace("gghalves", quietly = TRUE)) {
+                gghalves::geom_half_boxplot(outlier.shape = NA, side = "l")
+            } else {
+                ggplot2::geom_boxplot(outlier.shape = NA, width = 0.5)
+            }
+        } +
+        geom_jitter(
+            aes(x = as.numeric(level) + 0.22, colour = ConservationLevel),
+            width = 0.12, height = 0,
+            size = line_dot_size, alpha = alpha, show.legend = TRUE
+        )+
+
+       ylim(0,105) +
+        labs(x=NULL, y="Index incidence (%)\n", color="Conservation level")+
         theme_classic(base_size = base_size)+
         theme(
             legend.key = element_rect(fill = "transparent", colour = "transparent"),
@@ -206,11 +216,4 @@ plot_plot7<- function(data,
                       size=label_size, color="black", hjust=0, angle=90)
 
 }
-
-
-
-
-
-
-
 

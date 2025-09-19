@@ -24,10 +24,10 @@ concat_conserved_kmer(
 A list wit csv and fasta dataframes
 }
 \description{
-This function concatenates completely (index incidence = 100%)/highly (90% <=
-index incidence < 100%) conserved k-mer positions that overlapped at least one
-k-mer position or are adjacent to each other and generate the CCS/HCS sequence
-in either CSv or FASTA format
+This function concatenates completely ( index incidence = 100\% ) only or both 
+both the completely and highly ( 90\% <= index incidence < 100\% ) conserved 
+k-mer positions that overlapped at least one k-mer position or are
+adjacent to each other and generate the CCS/HCS sequence in either CSV or FASTA format
 }
 \examples{
 csv<-concat_conserved_kmer(proteins_1host)$csv

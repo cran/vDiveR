@@ -99,7 +99,11 @@ plot_world_map <- function(metadata, base_size=8){
         theme(plot.background = element_rect(fill = "transparent", colour = NA),
               panel.border = element_blank(), panel.grid = element_blank(),
               axis.text = element_blank(), axis.ticks = element_blank(), 
-              axis.title = element_blank(), legend.position = "right")
+              axis.title = element_blank(), legend.position = "right")+
+        labs(
+            x = "Longitude", 
+            y = "Latitude", 
+        )
 
     
     colnames(region_list) <- c('Region','Number of Sequences')
