@@ -47,7 +47,13 @@ plot_conservation_level <- function(df,
 
         #split the data into multiple subsets (if multiple hosts detected)
         plot7_list<-split(df,df$host)
-        plot7_multihost<-lapply(plot7_list,plot_plot7, protein_order,conservation_label, base_size,  line_dot_size, label_size, alpha)
+        plot7_multihost<-lapply(plot7_list, plot_plot7,
+                                 protein_order = protein_order,
+                                 conservation_label = conservation_label,
+                                 base_size = base_size,
+                                 line_dot_size = line_dot_size,
+                                 label_size = label_size,
+                                 alpha = alpha)
 
         # Remove legends from each individual plot
         plot7_no_legend <- lapply(plot7_multihost, function(p) p + theme(legend.position = "none"))
@@ -62,9 +68,8 @@ plot_conservation_level <- function(df,
 }
 
 
-#' @importFrom ggplot2 position_jitter scale_colour_manual
+#' @importFrom ggplot2 position_jitter scale_colour_manual scale_x_continuous
 #' @importFrom ggplot2 position_dodge coord_cartesian geom_jitter
-#' @importFrom gghalves geom_half_boxplot geom_half_point
 #' @importFrom ggtext geom_richtext
 #plotting function
 plot_plot7<- function(data,
@@ -75,7 +80,7 @@ plot_plot7<- function(data,
                       label_size = 2.6,
                       alpha =0.6){
     proteinName <- Total <- index.incidence <- NULL
-    label <- ConservationLevel <- level_data <- NULL
+    label <- ConservationLevel <- level_data <- x_pos <- NULL
     C_level<- c("Completely conserved (CC)",
                 "Highly conserved (HC)",
                 "Mixed variable (MV)",
@@ -171,23 +176,23 @@ plot_plot7<- function(data,
     data <- rbind(data, new_rows)
     data$ConservationLevel <- factor(data$ConservationLevel)
 
+    data$x_pos <- as.numeric(data$level)
+    protein_labels$x_pos <- match(protein_labels$proteinName, level)
+
     #--- plotting ----
-    ggplot(data %>% filter(level_data == 1) , aes(x=level,y=index.incidence)) +
-        # if gghalves is installed, use a true half box; else, a normal box
-        {
-            if (requireNamespace("gghalves", quietly = TRUE)) {
-                gghalves::geom_half_boxplot(outlier.shape = NA, side = "l")
-            } else {
-                ggplot2::geom_boxplot(outlier.shape = NA, width = 0.5)
-            }
-        } +
+    ggplot(data %>% filter(level_data == 1) , aes(y=index.incidence)) +
+        ggplot2::geom_boxplot(
+            aes(x = x_pos - 0.16, group = level),
+            outlier.shape = NA, width = 0.28
+        ) +
         geom_jitter(
-            aes(x = as.numeric(level) + 0.22, colour = ConservationLevel),
+            aes(x = x_pos + 0.18, colour = ConservationLevel),
             width = 0.12, height = 0,
             size = line_dot_size, alpha = alpha, show.legend = TRUE
         )+
 
        ylim(0,105) +
+        scale_x_continuous(breaks = seq_along(level), labels = level) +
         labs(x=NULL, y="Index incidence (%)\n", color="Conservation level")+
         theme_classic(base_size = base_size)+
         theme(
@@ -210,10 +215,9 @@ plot_plot7<- function(data,
         theme(plot.title = element_text(margin=margin(b = 50, unit = "pt"))) +
         guides(color = guide_legend(override.aes = list(size = 2), nrow=2))+
         geom_richtext(data = protein_labels,
-                      aes(x=proteinName,label = label, y=c(rep(105,nProtein)),
+                      aes(x=x_pos,label = label, y=c(rep(105,nProtein)),
                           label.size=0, label.color="transparent"),
                       position = position_dodge(width=0.1),
                       size=label_size, color="black", hjust=0, angle=90)
 
 }
-

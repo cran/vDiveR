@@ -22,6 +22,8 @@ The input dataframe of this function is obtainable from metadata_extraction(), w
 Protein / GISAID (EpiFlu/EpiCoV/EpiPox/EpiArbo) FASTA file as input.
 }
 \examples{
+\dontrun{
 geographical_plot <- plot_world_map(metadata)$plot
 geographical_df <- plot_world_map(metadata)$df
+}
 }

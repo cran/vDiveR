@@ -10,11 +10,15 @@
 #' @param base_size word size in plot
 #'
 #' @return A list with 2 elements (a plot followed by a dataframe)
-#' @examples geographical_plot <- plot_world_map(metadata)$plot
-#' @examples geographical_df <- plot_world_map(metadata)$df
+#' @examples
+#' \dontrun{
+#' geographical_plot <- plot_world_map(metadata)$plot
+#' geographical_df <- plot_world_map(metadata)$df
+#' }
 #' @importFrom ggplot2 geom_polygon scale_fill_gradient map_data
 #' @importFrom dplyr left_join %>% group_by ungroup slice rowwise mutate if_else
 #' @importFrom stringr str_to_title
+#' @importFrom maps map
 #' @export
 plot_world_map <- function(metadata, base_size=8){
     long <- lat <- group <- count <- city_ascii <- region.y <- region <- ID <- date <- NULL
@@ -28,17 +32,27 @@ plot_world_map <- function(metadata, base_size=8){
 
   
     #============= data preparation section - map city to region ========================#
-    build_in_path <- system.file("extdata", "city_mapper.csv", package = "vDiveR")
-    city2region <- utils::read.csv(build_in_path, stringsAsFactors = FALSE) 
+    city_mapper_url <- "https://raw.githubusercontent.com/pendy05/vDiveR/main/inst/extdata/city_mapper.csv"
+    city2region <- tryCatch({
+        message("Loading city_mapper.csv from GitHub...")
+        utils::read.csv(city_mapper_url, stringsAsFactors = FALSE)
+    }, error = function(e) {
+        stop("Unable to load city_mapper.csv from GitHub. Please check your internet connection.")
+    })
+
+    if (nrow(city2region) == 0) {
+        stop("city_mapper.csv loaded from GitHub is empty.")
+    }
+
     city2region$city_ascii <- tolower(city2region$city_ascii)
 
     # Identify duplicated city_ascii values
     duplicated_cities <- city2region %>%
         dplyr::filter(duplicated(city_ascii) | duplicated(city_ascii, fromLast = TRUE)) %>%
         dplyr::pull(city_ascii)
-    
+
     # Check if any metadata$region matches the duplicated cities
-    problematic_regions <- metadata$region[metadata$region %in% duplicated_cities]
+    problematic_regions <- metadata$region[tolower(metadata$region) %in% duplicated_cities]
 
     # Issue a warning if there are matches
     if (length(problematic_regions) > 0) {

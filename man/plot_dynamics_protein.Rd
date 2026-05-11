@@ -8,10 +8,10 @@ plot_dynamics_protein(
   df,
   host = 1,
   protein_order = NULL,
-  base_size = 8,
+  base_size = 11,
   alpha = 1/3,
   line_dot_size = 3,
-  bw = "nrd0",
+  bw = "ucv",
   adjust = 1
 )
 }
@@ -28,7 +28,7 @@ plot_dynamics_protein(
 
 \item{line_dot_size}{dot size in scatter plot}
 
-\item{bw}{smoothing bandwidth of violin plot (default: nrd0)}
+\item{bw}{smoothing bandwidth of violin plot (default: ucv)}
 
 \item{adjust}{adjust the width of violin plot (default: 1)}
 }
