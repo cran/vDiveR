@@ -1,12 +1,12 @@
-729d65ac9496ed6c05cde11a62a5d34b *DESCRIPTION
+10253a0787c4d40ba006c0507a924392 *DESCRIPTION
 220766f3030828297db042c0016d3b42 *LICENSE
 74adfc8148a652e3ef86fe40a7190e00 *NAMESPACE
-e2e9351a137d738a8a8bf9f406d7dcd6 *NEWS.md
+0b652f1aa164aed0c4368cd20d15bffe *NEWS.md
 df6cc46bc7fae1a55b713f3d5065b35a *R/DiveR-package.R
 48420446fb0dbe9b6dceda85e3eb8814 *R/concat_conserved_kmer.R
 abe274733d079b0549d261033bdd0ea7 *R/json2csv.R
 6dc1a2722e22457a7179349a9b341e1b *R/metadata_extraction.R
-54323b4df6d21b9e08efbabbc24dae3e *R/plot_conservation_level.R
+e4defa2fd3576e677fb3961cef9c77f5 *R/plot_conservation_level.R
 111d642412ffc5cd95e96031b0720b1c *R/plot_correlation.R
 d508ad3f84a3deeb5f07c2cb14c1ade0 *R/plot_dynamics_protein.R
 f778a5eef07ab68a2e28f1a4e2a040eb *R/plot_dynamics_proteome.R
@@ -43,3 +43,4 @@ c04a3101a5d32da983a20dded0446803 *man/plot_world_map.Rd
 17a5572da216dce0138d6704916eb0ea *tests/testthat.R
 7536fbf61062b0cf039004e7406a917c *tests/testthat/test-concat-seq.R
 db77c2f3a0bba5f5449fca72f8c7e332 *tests/testthat/test-json2csv.R
+df5f49d5fddf17afd42352e8a39fc155 *tests/testthat/test-plot-conservation-level.R

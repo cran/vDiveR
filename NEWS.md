@@ -1,5 +1,3 @@
-# vDiveR 2.2.0
+# vDiveR 2.2.1
 
-* json2csv - include all positions with/wo index motif and display all information as expected other than index related-info for those position without index.
-* diversity dynamics (protein n proteome level) plots - update plot display structure.
-* entropy plot - enhance plot legend
+* conservation plot - fix the Linux and Window platform bug due to the label custom code

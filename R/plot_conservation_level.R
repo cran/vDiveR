@@ -60,10 +60,10 @@ plot_conservation_level <- function(df,
         # Combine the plots and add a single legend at the bottom
         combined_plot <- plot_grid(plotlist = plot7_no_legend,
                                 ncol = 1)
-        # Extract the legend from one of the plots (assuming all plots have the same legend)
-        shared_legend <- cowplot::get_plot_component(plot7_multihost[[1]], "guide-box", return_all = TRUE)[[3]]
+        # Extract the complete legend grob from one of the plots.
+        shared_legend <- cowplot::get_legend(plot7_multihost[[1]])
         # Combine the grid with the legend at the bottom
-        plot_grid(combined_plot, shared_legend, ncol = 1, nrow = length(unique(df$host)), rel_heights = c(1, .1))
+        plot_grid(combined_plot, shared_legend, ncol = 1, rel_heights = c(1, .12))
     }
 }
 
@@ -139,16 +139,11 @@ plot_plot7<- function(data,
 
     #gather the protein label in multicolor
     plot7_data<-plot7_data%>%mutate(label = case_when(
-        plot7_data$ConservationLevel == "Completely conserved (CC)" ~ paste0(sprintf("<span style =
-    'color:#000000;'>CC: %.0f (%.1f %%) </span>",plot7_data$Total, round(plot7_data$percent,1))),
-        plot7_data$ConservationLevel == "Highly conserved (HC)" ~ paste0(sprintf("<span style =
-    'color:#0057d1;'>HC: %.0f (%.1f %%) </span>",plot7_data$Total, round(plot7_data$percent,1))),
-        plot7_data$ConservationLevel == "Mixed variable (MV)" ~ paste0(sprintf("<span style =
-    'color:#02d57f;'>MV: %.0f (%.1f %%) </span>",plot7_data$Total, round(plot7_data$percent,1))),
-        plot7_data$ConservationLevel == "Highly diverse (HD)" ~ paste0(sprintf("<span style =
-    'color:#A022FF;'>HD: %.0f (%.1f %%) </span>",plot7_data$Total, round(plot7_data$percent,1))),
-        plot7_data$ConservationLevel == "Extremely diverse (ED)" ~ paste0(sprintf("<span style =
-    'color:#ff617d;'>ED: %.0f (%.1f %%) </span>",plot7_data$Total, round(plot7_data$percent,1))),
+        plot7_data$ConservationLevel == "Completely conserved (CC)" ~ sprintf("<span style='color:#000000;'>CC: %.0f (%.1f %%)</span>", plot7_data$Total, round(plot7_data$percent, 1)),
+        plot7_data$ConservationLevel == "Highly conserved (HC)" ~ sprintf("<span style='color:#0057d1;'>HC: %.0f (%.1f %%)</span>", plot7_data$Total, round(plot7_data$percent, 1)),
+        plot7_data$ConservationLevel == "Mixed variable (MV)" ~ sprintf("<span style='color:#02d57f;'>MV: %.0f (%.1f %%)</span>", plot7_data$Total, round(plot7_data$percent, 1)),
+        plot7_data$ConservationLevel == "Highly diverse (HD)" ~ sprintf("<span style='color:#A022FF;'>HD: %.0f (%.1f %%)</span>", plot7_data$Total, round(plot7_data$percent, 1)),
+        plot7_data$ConservationLevel == "Extremely diverse (ED)" ~ sprintf("<span style='color:#ff617d;'>ED: %.0f (%.1f %%)</span>", plot7_data$Total, round(plot7_data$percent, 1)),
     ))
 
     # set conservation level in specific order (CC,HC,MV,HD,ED)

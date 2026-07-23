@@ -1,7 +1,7 @@
 Package: vDiveR
 Type: Package
 Title: Visualization of Viral Protein Sequence Diversity Dynamics
-Version: 2.2.0
+Version: 2.2.1
 Authors@R: c(
     person("Pendy", "Tok", email = "pendytok0518@gmail.com", role = c("aut", "cre")),
     person("Li Chuin", "Chong", role = "aut"),
@@ -24,7 +24,7 @@ Depends: R (>= 2.10)
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2026-05-10 12:05:34 UTC; pendy
+Packaged: 2026-07-23 10:51:21 UTC; pendy
 Author: Pendy Tok [aut, cre],
   Li Chuin Chong [aut],
   Evgenia Chikina [aut],
@@ -32,4 +32,4 @@ Author: Pendy Tok [aut, cre],
   Mohammad Asif Khan [aut]
 Maintainer: Pendy Tok <pendytok0518@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-05-11 06:50:07 UTC
+Date/Publication: 2026-07-23 12:40:02 UTC
